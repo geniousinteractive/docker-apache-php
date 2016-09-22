@@ -37,8 +37,7 @@ RUN apt-get clean && apt-get update && apt-get install --fix-missing -y \
   apt-transport-https \
   zlib1g-dev \
   libicu-dev \
-  libpq-dev \
-  nano
+  libpq-dev
 
 # postgresql-client-9.5
 RUN wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo apt-key add - && echo "deb http://apt.postgresql.org/pub/repos/apt/ jessie-pgdg main" >> /etc/apt/sources.list && apt-get update && apt-get install -y postgresql-client-9.5
@@ -146,6 +145,13 @@ RUN a2enmod rewrite expires && service apache2 restart
 
 # Install Drupal Console for Drupal 8
 RUN curl https://drupalconsole.com/installer -L -o drupal.phar && mv drupal.phar /usr/local/bin/drupal && chmod +x /usr/local/bin/drupal
+
+# Install RVM
+RUN gpg --keyserver hkp://keys.gnupg.net --recv-keys 409B6B1796C275462A1703113804BB82D39DC0E3
+RUN \curl -L https://get.rvm.io | bash -s stable
+RUN /bin/bash -l -c "rvm requirements"
+RUN /bin/bash -l -c "rvm install 2.0"
+RUN /bin/bash -l -c "gem install bundler --no-ri --no-rdoc"
 
 # Install nano
 RUN echo "deb http://ftp.fr.debian.org/debian/ stretch main" > /etc/apt/sources.list
