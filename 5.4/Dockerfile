@@ -6,8 +6,6 @@ COPY config/php.ini /usr/local/etc/php/
 COPY config/bashrc /root/
 RUN mv /root/bashrc /root/.bashrc
 
-RUN echo "deb http://ftp.fr.debian.org/debian/ stretch main" > /etc/apt/sources.list
-RUN echo "deb-src http://ftp.fr.debian.org/debian/ stretch main" > /etc/apt/sources.list
 RUN apt-get clean && apt-get update && apt-get install --fix-missing -y \
   ruby-dev \
   rubygems \
@@ -144,6 +142,11 @@ RUN wget https://phar.phpunit.de/phpcpd.phar && chmod +x phpcpd.phar && mv phpcp
 
 # install phpmetrics
 RUN wget https://github.com/phpmetrics/PhpMetrics/raw/master/build/phpmetrics.phar && chmod +x phpmetrics.phar && mv phpmetrics.phar /usr/local/bin/phpmetrics
+
+# Install nano
+RUN echo "deb http://ftp.fr.debian.org/debian/ stretch main" > /etc/apt/sources.list
+RUN echo "deb-src http://ftp.fr.debian.org/debian/ stretch main" > /etc/apt/sources.list
+RUN apt-get clean && apt-get update && apt-get install -y --fix-missing nano
 
 # Our apache volume
 VOLUME /var/www/html

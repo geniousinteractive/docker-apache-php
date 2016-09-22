@@ -6,8 +6,6 @@ COPY config/php.ini /usr/local/etc/php/
 COPY config/bashrc /root/
 RUN mv /root/bashrc /root/.bashrc
 
-RUN echo "deb http://ftp.fr.debian.org/debian/ stretch main" > /etc/apt/sources.list
-RUN echo "deb-src http://ftp.fr.debian.org/debian/ stretch main" > /etc/apt/sources.list
 RUN apt-get clean && apt-get update && apt-get install --fix-missing -y \
   ruby-dev \
   rubygems \
@@ -157,6 +155,11 @@ RUN wget https://github.com/phpmetrics/PhpMetrics/raw/master/build/phpmetrics.ph
 
 # Install Drupal Console for Drupal 8
 RUN curl https://drupalconsole.com/installer -L -o drupal.phar && mv drupal.phar /usr/local/bin/drupal && chmod +x /usr/local/bin/drupal
+
+# Install nano
+RUN echo "deb http://ftp.fr.debian.org/debian/ stretch main" > /etc/apt/sources.list
+RUN echo "deb-src http://ftp.fr.debian.org/debian/ stretch main" > /etc/apt/sources.list
+RUN apt-get clean && apt-get update && apt-get install -y --fix-missing nano
 
 # Our apache volume
 VOLUME /var/www/html
