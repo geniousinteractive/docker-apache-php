@@ -1,20 +1,3 @@
-# About this repo
-
-This is the Actency Docker **Drupal** optimized images for apache-php.
-
-Available tags are:
-- 7.0, latest ([7.0/Dockerfile](https://github.com/Actency/docker-apache-php/blob/master/7.0/Dockerfile))
-- 5.6 ([5.6/Dockerfile](https://github.com/Actency/docker-apache-php/tree/master/5.6/Dockerfile))
-- 5.5 ([5.5/Dockerfile](https://github.com/Actency/docker-apache-php/tree/master/5.5/Dockerfile))
-- 5.4 ([5.4/Dockerfile](https://github.com/Actency/docker-apache-php/tree/master/5.4/Dockerfile))
-- 5.3 ([5.3/Dockerfile](https://github.com/Actency/docker-apache-php/tree/master/5.3/Dockerfile))
-
-The image basically contains:
-
-- All php libraries needed for Drupal (gd, mbstring, mcrypt, zip, soap, pdo_mysql, mysqli, xsl, opcache, calendar, intl)
-- Development tools for Drupal (xdebug, codesniffer, compass, less, node.js, grunt, gulp, composer, drush, phing, phpcpd, phpmetrics)
-- Much more...
-
 # Docker-compose
 ## Use this docker-compose.yml to create a complete development environment using several Actency Docker images:
 
@@ -157,5 +140,3 @@ The image basically contains:
     #       - mongo
     # ##### END OF PROFILING SECTION #####
 
-
-[Docker Hub page](https://hub.docker.com/r/actency/docker-apache-php/)
