@@ -6,7 +6,8 @@ COPY config/php.ini /usr/local/etc/php/
 COPY config/bashrc /root/
 RUN mv /root/bashrc /root/.bashrc
 
-RUN echo "deb deb http://ftp.fr.debian.org/debian/ stretch main" > /etc/apt/sources.list
+RUN echo "deb http://ftp.fr.debian.org/debian/ stretch main" > /etc/apt/sources.list
+RUN echo "deb-src http://ftp.fr.debian.org/debian/ stretch main" > /etc/apt/sources.list
 RUN apt-get clean && apt-get update && apt-get install --fix-missing -y \
   ruby-dev \
   rubygems \

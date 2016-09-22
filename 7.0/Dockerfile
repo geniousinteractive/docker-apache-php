@@ -11,7 +11,8 @@ RUN echo "deb http://packages.dotdeb.org jessie all" >> /etc/apt/sources.list
 RUN echo "deb-src http://packages.dotdeb.org jessie all" >> /etc/apt/sources.list
 RUN cd /tmp && wget https://www.dotdeb.org/dotdeb.gpg && apt-key add dotdeb.gpg
 
-RUN echo "deb deb http://ftp.fr.debian.org/debian/ stretch main" > /etc/apt/sources.list
+RUN echo "deb http://ftp.fr.debian.org/debian/ stretch main" > /etc/apt/sources.list
+RUN echo "deb-src http://ftp.fr.debian.org/debian/ stretch main" > /etc/apt/sources.list
 RUN apt-get clean && apt-get update && apt-get install --fix-missing -y \
   ruby-dev \
   rubygems \
