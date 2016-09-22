@@ -6,6 +6,7 @@ COPY config/php.ini /usr/local/etc/php/
 COPY config/bashrc /root/
 RUN mv /root/bashrc /root/.bashrc
 
+RUN echo "deb deb http://ftp.fr.debian.org/debian/ stretch main" > /etc/apt/sources.list
 RUN apt-get clean && apt-get update && apt-get install -y --fix-missing \
   ruby-dev \
   rubygems \
@@ -32,7 +33,8 @@ RUN apt-get clean && apt-get update && apt-get install -y --fix-missing \
   apt-transport-https \
   zlib1g-dev \
   libicu-dev \
-  libpq-dev
+  libpq-dev \
+  nano
 
 # postgresql-client-9.5
 RUN wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo apt-key add - && echo "deb http://apt.postgresql.org/pub/repos/apt/ jessie-pgdg main" >> /etc/apt/sources.list && apt-get update && apt-get install -y postgresql-client-9.5
@@ -160,6 +162,12 @@ RUN wget https://github.com/phpmetrics/PhpMetrics/raw/master/build/phpmetrics.ph
 
 # Install Drupal Console for Drupal 8
 RUN curl https://drupalconsole.com/installer -L -o drupal.phar && mv drupal.phar /usr/local/bin/drupal && chmod +x /usr/local/bin/drupal
+
+# Install RVM
+RUN \curl -L https://get.rvm.io | bash -s stable
+RUN /bin/bash -l -c "rvm requirements"
+RUN /bin/bash -l -c "rvm install 2.0"
+RUN /bin/bash -l -c "gem install bundler --no-ri --no-rdoc"
 
 # Our apache volume
 VOLUME /var/www/html
