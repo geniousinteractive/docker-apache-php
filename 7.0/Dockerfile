@@ -153,11 +153,6 @@ RUN /bin/bash -l -c "rvm requirements"
 RUN /bin/bash -l -c "rvm install 2.0"
 RUN /bin/bash -l -c "gem install bundler --no-ri --no-rdoc"
 
-# Install nano
-RUN echo "deb http://ftp.fr.debian.org/debian/ stretch main" > /etc/apt/sources.list
-RUN echo "deb-src http://ftp.fr.debian.org/debian/ stretch main" > /etc/apt/sources.list
-RUN apt-get clean && apt-get update && apt-get install -y --fix-missing nano
-
 # Our apache volume
 VOLUME /var/www/html
 
