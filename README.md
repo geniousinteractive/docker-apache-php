@@ -16,6 +16,7 @@
           - DOCUMENTROOT=htdocs
         volumes:
           - /home/docker/projets/example/:/var/www/html/
+          - ./root:/root/
           - /home/docker/.ssh/:/var/www/.ssh/
         links:
           - database:mysql

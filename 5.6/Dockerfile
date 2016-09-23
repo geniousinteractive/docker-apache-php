@@ -172,6 +172,7 @@ RUN /bin/bash -l -c "gem install bundler --no-ri --no-rdoc"
 RUN apt-get install nano -y
 
 # Our apache volume
+VOLUME /root
 VOLUME /var/www/html
 
 # create directory for ssh keys
