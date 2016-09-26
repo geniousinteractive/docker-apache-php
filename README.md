@@ -5,8 +5,8 @@
     services:
       # web with xdebug - actency images
       web:
-        # actency/docker-apache-php available tags: latest, 7.0, 5.6, 5.5, 5.4, 5.3
-        image: actency/docker-apache-php:7.0
+        # geniousinteractive/docker-apache-php available tags: latest, 5.6, 5.5, 5.4, 5.3
+        image: geniousinteractive/docker-apache-php:7.0
         ports:
           - "80:80"
           - "9000:9000"
