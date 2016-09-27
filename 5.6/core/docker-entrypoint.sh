@@ -32,3 +32,10 @@ rm -f /var/run/apache2/apache2.pid
 
 SET /P Host= | /sbin/ip route|awk '/default/ { print $3 }'
 echo xdebug.remote_host=%Host% >> /usr/local/etc/php/conf.d/xdebug.ini;
+
+# Install RVM
+RUN gpg --keyserver hkp://keys.gnupg.net --recv-keys 409B6B1796C275462A1703113804BB82D39DC0E3
+echo 'export rvm_prefix="$HOME"' > /root/.rvmrc
+echo 'export rvm_path="$HOME/.rvm"' >> /root/.rvmrc
+RUN \curl -L https://get.rvm.io | rvm_path=/root/rvm bash -s stable
+RUN /bin/bash -l -c "rvm requirements"

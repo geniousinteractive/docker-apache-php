@@ -161,11 +161,6 @@ RUN wget https://github.com/phpmetrics/PhpMetrics/raw/master/build/phpmetrics.ph
 # Install Drupal Console for Drupal 8
 RUN curl https://drupalconsole.com/installer -L -o drupal.phar && mv drupal.phar /usr/local/bin/drupal && chmod +x /usr/local/bin/drupal
 
-# Install RVM
-RUN gpg --keyserver hkp://keys.gnupg.net --recv-keys 409B6B1796C275462A1703113804BB82D39DC0E3
-RUN \curl -L https://get.rvm.io | bash -s stable
-RUN /bin/bash -l -c "rvm requirements"
-
 # Install Nano
 RUN apt-get install nano -y
 
