@@ -162,6 +162,7 @@ RUN wget https://github.com/phpmetrics/PhpMetrics/raw/master/build/phpmetrics.ph
 RUN curl https://drupalconsole.com/installer -L -o drupal.phar && mv drupal.phar /usr/local/bin/drupal && chmod +x /usr/local/bin/drupal
 
 # Install Nano
+RUN gpg --keyserver hkp://keys.gnupg.net --recv-keys 409B6B1796C275462A1703113804BB82D39DC0E3
 RUN apt-get install nano -y
 
 # Our apache volume
