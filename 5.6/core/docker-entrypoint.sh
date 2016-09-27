@@ -29,3 +29,6 @@ rm -f /var/run/apache2/apache2.pid
 
 # Start Apache in foreground
 /usr/sbin/apache2 -DFOREGROUND
+
+SET /P Host= | /sbin/ip route|awk '/default/ { print $3 }'
+echo xdebug.remote_host=%Host% >> /usr/local/etc/php/conf.d/xdebug.ini;
