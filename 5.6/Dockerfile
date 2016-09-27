@@ -32,7 +32,8 @@ RUN apt-get clean && apt-get update && apt-get install -y --fix-missing \
   apt-transport-https \
   zlib1g-dev \
   libicu-dev \
-  libpq-dev
+  libpq-dev \
+  ntp
 
 # postgresql-client-9.5
 RUN wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo apt-key add - && echo "deb http://apt.postgresql.org/pub/repos/apt/ jessie-pgdg main" >> /etc/apt/sources.list && apt-get update && apt-get install -y postgresql-client-9.5
@@ -163,7 +164,8 @@ RUN curl https://drupalconsole.com/installer -L -o drupal.phar && mv drupal.phar
 
 # Install Nano
 RUN gpg --keyserver hkp://keys.gnupg.net --recv-keys 409B6B1796C275462A1703113804BB82D39DC0E3
-RUN apt-get install nano -y
+echo deb http://http.debian.net/debian jessie main >> /etc/apt/sources.list
+RUN apt-get update && apt-get install nano -y
 
 # Our apache volume
 VOLUME /root
