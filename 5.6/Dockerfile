@@ -164,7 +164,7 @@ RUN curl https://drupalconsole.com/installer -L -o drupal.phar && mv drupal.phar
 
 # Install Nano
 RUN gpg --keyserver hkp://keys.gnupg.net --recv-keys 409B6B1796C275462A1703113804BB82D39DC0E3
-echo deb http://http.debian.net/debian jessie main >> /etc/apt/sources.list
+RUN echo deb http://http.debian.net/debian jessie main >> /etc/apt/sources.list
 RUN apt-get update && apt-get install nano -y
 
 # Our apache volume
