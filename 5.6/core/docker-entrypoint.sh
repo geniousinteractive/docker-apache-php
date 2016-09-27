@@ -29,12 +29,3 @@ rm -f /var/run/apache2/apache2.pid
 
 # Start Apache in foreground
 /usr/sbin/apache2 -DFOREGROUND
-
-RUN SET /P Host= | /sbin/ip route|awk '/default/ { print $3 }'
-RUN echo xdebug.remote_host=%Host% >> /usr/local/etc/php/conf.d/xdebug.ini;
-
-# Install RVM
-RUN echo 'export rvm_prefix="$HOME"' > /root/.rvmrc
-RUN echo 'export rvm_path="$HOME/.rvm"' >> /root/.rvmrc
-RUN \curl -L https://get.rvm.io | rvm_path=/root/rvm bash -s stable
-RUN /bin/bash -l -c "rvm requirements"
