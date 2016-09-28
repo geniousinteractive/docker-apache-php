@@ -163,11 +163,11 @@ VOLUME /root
 VOLUME /var/www/html
 
 # Install Nano
-RUN gpg --keyserver hkp://keys.gnupg.net --recv-keys 409B6B1796C275462A1703113804BB82D39DC0E3
 RUN echo deb http://http.debian.net/debian jessie main >> /etc/apt/sources.list
 RUN apt-get update && apt-get install nano -y
 
 # Install RVM
+RUN command curl -sSL https://rvm.io/mpapis.asc | gpg --import -
 RUN echo 'export rvm_prefix="$HOME"' > /root/.rvmrc
 RUN echo 'export rvm_path="$HOME/.rvm"' >> /root/.rvmrc
 RUN \curl -L https://get.rvm.io | rvm_path=/root/rvm bash -s stable
