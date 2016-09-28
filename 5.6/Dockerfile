@@ -171,10 +171,10 @@ VOLUME /root
 VOLUME /var/www/html
 
 #Move RVM to root
-RUN mv /opt/rvm /root/.
 RUN echo 'export rvm_prefix="$HOME"' > /root/.rvmrc
 RUN echo 'export rvm_path="$HOME/.rvm"' >> /root/.rvmrc
-RUN /bin/bash -l -c "/root/rvm/bin/rvm requirements"
+RUN /bin/bash -l -c "/opt/rvm/bin/rvm requirements"
+RUN mv /opt/rvm /root/.
 
 # create directory for ssh keys
 RUN mkdir /var/www/.ssh/
