@@ -29,7 +29,9 @@ RUN apt-get clean && apt-get update && apt-get install -y --fix-missing \
   zlib1g-dev \
   libicu-dev \
   libpq-dev \
-  ntp
+  ntp \
+  mpapis \
+  public key
 
 # postgresql-client-9.5
 RUN wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo apt-key add - && echo "deb http://apt.postgresql.org/pub/repos/apt/ jessie-pgdg main" >> /etc/apt/sources.list && apt-get update && apt-get install -y postgresql-client-9.5
@@ -158,20 +160,22 @@ RUN wget https://github.com/phpmetrics/PhpMetrics/raw/master/build/phpmetrics.ph
 # Install Drupal Console for Drupal 8
 RUN curl https://drupalconsole.com/installer -L -o drupal.phar && mv drupal.phar /usr/local/bin/drupal && chmod +x /usr/local/bin/drupal
 
-# Our apache volume
-VOLUME /root
-VOLUME /var/www/html
-
 # Install Nano
 RUN echo deb http://http.debian.net/debian jessie main >> /etc/apt/sources.list
 RUN apt-get update && apt-get install nano -y
 
 # Install RVM
 RUN gpg --keyserver hkp://keys.gnupg.net --recv-keys 409B6B1796C275462A1703113804BB82D39DC0E3
-RUN gpg --armor --export 409B6B1796C275462A1703113804BB82D39DC0E3 | apt-key add -
+RUN \curl -L https://get.rvm.io | rvm_path=/opt/rvm bash -s stable
+
+# Our apache volume
+VOLUME /root
+VOLUME /var/www/html
+
+#Move RVM to root
+RUN mv /opt/rvm /root/.
 RUN echo 'export rvm_prefix="$HOME"' > /root/.rvmrc
 RUN echo 'export rvm_path="$HOME/.rvm"' >> /root/.rvmrc
-RUN \curl -L https://get.rvm.io | rvm_path=/root/rvm bash -s stable
 RUN /bin/bash -l -c "rvm requirements"
 
 # create directory for ssh keys
