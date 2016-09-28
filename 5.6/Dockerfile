@@ -158,6 +158,10 @@ RUN wget https://github.com/phpmetrics/PhpMetrics/raw/master/build/phpmetrics.ph
 # Install Drupal Console for Drupal 8
 RUN curl https://drupalconsole.com/installer -L -o drupal.phar && mv drupal.phar /usr/local/bin/drupal && chmod +x /usr/local/bin/drupal
 
+# Our apache volume
+VOLUME /root
+VOLUME /var/www/html
+
 # Install Nano
 RUN gpg --keyserver hkp://keys.gnupg.net --recv-keys 409B6B1796C275462A1703113804BB82D39DC0E3
 RUN echo deb http://http.debian.net/debian jessie main >> /etc/apt/sources.list
@@ -168,10 +172,6 @@ RUN echo 'export rvm_prefix="$HOME"' > /root/.rvmrc
 RUN echo 'export rvm_path="$HOME/.rvm"' >> /root/.rvmrc
 RUN \curl -L https://get.rvm.io | rvm_path=/root/rvm bash -s stable
 RUN /bin/bash -l -c "rvm requirements"
-
-# Our apache volume
-VOLUME /root
-VOLUME /var/www/html
 
 # create directory for ssh keys
 RUN mkdir /var/www/.ssh/
