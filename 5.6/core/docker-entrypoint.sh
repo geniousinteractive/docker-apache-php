@@ -5,7 +5,7 @@ set -e
 # This script will change the www-data UID/GID in the container from to 33 (default) to the UID/GID of the host user, if the current host user is not root.
 OWNER=$(stat -c '%u' /var/www/html)
 GROUP=$(stat -c '%g' /var/www/html)
-USERNAME=www-data
+USERNAME=root
 [ -e "/etc/debian_version" ] || USERNAME=apache
 if [ "$OWNER" != "0" ]; then
   usermod -o -u $OWNER $USERNAME
@@ -17,7 +17,7 @@ fi
 echo The apache user and group has been set to the following:
 id $USERNAME
 
-usermod -d /var/www www-data
+usermod -d /var/www root
 
 # Apache2 custom servername, alias and documentroot
 sed -i "s/MYSERVERNAME/$SERVERNAME/g" /etc/apache2/apache2.conf
