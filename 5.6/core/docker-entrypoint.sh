@@ -17,6 +17,9 @@ fi
 echo The apache user and group has been set to the following:
 id $USERNAME
 
+adduser --system --uid=$(stat -c %u .) "$owner"
+echo "APACHE_RUN_USER=$owner" >> /etc/apache2/envvars
+
 usermod -d /var/www www-data
 
 # Apache2 custom servername, alias and documentroot
