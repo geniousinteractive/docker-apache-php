@@ -175,7 +175,6 @@ VOLUME /var/www/html
 RUN mkdir /var/www/.ssh/
 RUN chown -R www-data:www-data /var/www/
 RUN chmod -R 600 /var/www/.ssh/
-RUN usermod -G users www-data
 
 # Set timezone to Europe/Paris
 RUN echo "Europe/Paris" > /etc/timezone && dpkg-reconfigure -f noninteractive tzdata
@@ -185,5 +184,6 @@ EXPOSE 80 9000
 
 # Set a custom entrypoint.
 COPY core/docker-entrypoint.sh /
+RUN usermod -G users www-data
 RUN chmod +x /docker-entrypoint.sh
 ENTRYPOINT ["/docker-entrypoint.sh"]
