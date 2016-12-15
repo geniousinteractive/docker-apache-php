@@ -109,6 +109,7 @@ COPY core/memcached.conf /etc/memcached.conf
     cd /var/www/.drush && wget https://ftp.drupal.org/files/projects/registry_rebuild-7.x-2.3.zip && unzip registry_rebuild-7.x-2.3.zip; \
     cd /var/www/.drush && wget https://ftp.drupal.org/files/projects/site_audit-7.x-1.15.zip && unzip site_audit-7.x-1.15.zip; \
     cd /var/www/.drush && rm *.zip; \
+    sudo usermod -u 1000 www-data \
     chown -R www-data:www-data /var/www; \
     sudo -u www-data drush cc drush; \
 
@@ -161,6 +162,7 @@ RUN curl https://drupalconsole.com/installer -L -o drupal.phar && mv drupal.phar
 # Install Nano
 RUN echo deb http://http.debian.net/debian jessie main >> /etc/apt/sources.list
 RUN apt-get update && apt-get install nano -y
+RUN apt-get install pv -y
 
 # Install RVM
 RUN gpg --keyserver hkp://keys.gnupg.net --recv-keys 409B6B1796C275462A1703113804BB82D39DC0E3
@@ -186,5 +188,3 @@ EXPOSE 80 9000
 COPY core/docker-entrypoint.sh /
 RUN chmod +x /docker-entrypoint.sh
 ENTRYPOINT ["/docker-entrypoint.sh"]
-
-RUN usermod -G users www-data
