@@ -109,6 +109,7 @@ COPY core/memcached.conf /etc/memcached.conf
     cd /var/www/.drush && wget https://ftp.drupal.org/files/projects/registry_rebuild-7.x-2.3.zip && unzip registry_rebuild-7.x-2.3.zip; \
     cd /var/www/.drush && wget https://ftp.drupal.org/files/projects/site_audit-7.x-1.15.zip && unzip site_audit-7.x-1.15.zip; \
     cd /var/www/.drush && rm *.zip; \
+    sudo usermod -u 1000 www-data \
     chown -R www-data:www-data /var/www; \
     sudo -u www-data drush cc drush; \
 
@@ -161,11 +162,26 @@ RUN curl https://drupalconsole.com/installer -L -o drupal.phar && mv drupal.phar
 # Install Nano
 RUN echo deb http://http.debian.net/debian jessie main >> /etc/apt/sources.list
 RUN apt-get update && apt-get install nano -y
+RUN apt-get install pv -y
 
 # Install RVM
 RUN gpg --keyserver hkp://keys.gnupg.net --recv-keys 409B6B1796C275462A1703113804BB82D39DC0E3
 RUN \curl -L https://get.rvm.io | rvm_path=/opt/rvm bash -s stable
 RUN /bin/bash -l -c "/opt/rvm/bin/rvm requirements"
+
+ENV GOSU_VERSION 1.9
+RUN set -x \
+    && apt-get update && apt-get install -y --no-install-recommends ca-certificates wget && rm -rf /var/lib/apt/lists/* \
+    && dpkgArch="$(dpkg --print-architecture | awk -F- '{ print $NF }')" \
+    && wget -O /usr/local/bin/gosu "https://github.com/tianon/gosu/releases/download/$GOSU_VERSION/gosu-$dpkgArch" \
+    && wget -O /usr/local/bin/gosu.asc "https://github.com/tianon/gosu/releases/download/$GOSU_VERSION/gosu-$dpkgArch.asc" \
+    && export GNUPGHOME="$(mktemp -d)" \
+    && gpg --keyserver ha.pool.sks-keyservers.net --recv-keys B42F6819007F00F88E364FD4036A9C25BF357DD4 \
+    && gpg --batch --verify /usr/local/bin/gosu.asc /usr/local/bin/gosu \
+    && rm -r "$GNUPGHOME" /usr/local/bin/gosu.asc \
+    && chmod +x /usr/local/bin/gosu \
+    && gosu nobody true \
+    && apt-get purge -y --auto-remove ca-certificates wget
 
 # Our apache volume
 VOLUME /root
@@ -175,7 +191,6 @@ VOLUME /var/www/html
 RUN mkdir /var/www/.ssh/
 RUN chown -R www-data:www-data /var/www/
 RUN chmod -R 600 /var/www/.ssh/
-RUN usermod -G users www-data
 
 # Set timezone to Europe/Paris
 RUN echo "Europe/Paris" > /etc/timezone && dpkg-reconfigure -f noninteractive tzdata

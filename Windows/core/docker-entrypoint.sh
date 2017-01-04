@@ -1,6 +1,13 @@
 #!/bin/bash -e
 set -e
 
+USER=www-data
+VOLUME=/var/www/html
+UID="$(stat -c '%u' $VOLUME)" && \
+useradd --uid "$UID" "$USER" && \
+ls -l "$VOLUME" && \
+exec gosu "$USER" "$@"
+
 # Set the apache user and group to match the host user.
 # This script will change the www-data UID/GID in the container from to 33 (default) to the UID/GID of the host user, if the current host user is not root.
 OWNER=$(stat -c '%u' /var/www/html)
