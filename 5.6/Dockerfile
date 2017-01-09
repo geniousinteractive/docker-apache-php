@@ -169,6 +169,10 @@ RUN gpg --keyserver hkp://keys.gnupg.net --recv-keys 409B6B1796C275462A170311380
 RUN \curl -L https://get.rvm.io | rvm_path=/opt/rvm bash -s stable
 RUN /bin/bash -l -c "/opt/rvm/bin/rvm requirements"
 
+# Install Imagick
+RUN apt-get install -y libmagickwand-dev --no-install-recommends
+RUN pecl install imagick
+
 # Our apache volume
 VOLUME /root
 VOLUME /var/www/html
