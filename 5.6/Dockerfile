@@ -42,6 +42,10 @@ RUN docker-php-pecl-install \
   memcache-3.0.8 \
   yaml-1.2.0 \
   mongo-1.6.12
+  
+  # Install Imagick
+RUN apt-get install -y libmagickwand-dev --no-install-recommends
+RUN pecl install imagick
 
 COPY docker-php-ext-install /usr/local/bin/
 RUN chmod +x /usr/local/bin/docker-php-ext-install
@@ -168,10 +172,6 @@ RUN apt-get install pv -y
 RUN gpg --keyserver hkp://keys.gnupg.net --recv-keys 409B6B1796C275462A1703113804BB82D39DC0E3
 RUN \curl -L https://get.rvm.io | rvm_path=/opt/rvm bash -s stable
 RUN /bin/bash -l -c "/opt/rvm/bin/rvm requirements"
-
-# Install Imagick
-RUN apt-get install -y libmagickwand-dev --no-install-recommends
-RUN pecl install imagick
 
 # Our apache volume
 VOLUME /root
