@@ -15,7 +15,7 @@ RUN apt-get clean && apt-get update && apt-get install --fix-missing -y \
   sudo \
   git \
   vim \
-  php7.1-dev \
+  php7.1 \
   memcached \
   libmemcached-tools \
   libmemcached-dev \
