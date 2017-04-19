@@ -49,24 +49,23 @@ RUN pecl install imagick
 
 COPY docker-php-ext-install /usr/local/bin/
 RUN chmod +x /usr/local/bin/docker-php-ext-install
-RUN docker-php-ext-configure gd --with-jpeg-dir=/usr/include/ \
-&& docker-php-ext-install \
-  gd \
-  mbstring \
-  mcrypt \
-  zip \
-  soap \
-  mysql \
-  pdo_mysql \
-  mysqli \
-  xsl \
-  opcache \
-  calendar \
-  intl \
-  exif \
-  pgsql \
-  pdo_pgsql \
-  ftp
+RUN docker-php-ext-configure gd --with-jpeg-dir=/usr/include/
+RUN docker-php-ext-install gd
+RUN docker-php-ext-install mbstring
+RUN docker-php-ext-install mcrypt
+RUN docker-php-ext-install zip
+RUN docker-php-ext-install soap
+RUN docker-php-ext-install mysql
+RUN docker-php-ext-install pdo_mysql
+RUN docker-php-ext-install mysqli
+RUN docker-php-ext-install xsl
+RUN docker-php-ext-install opcache
+RUN docker-php-ext-install calendar
+RUN docker-php-ext-install intl
+RUN docker-php-ext-install exif
+RUN docker-php-ext-install pgsql
+RUN docker-php-ext-install pdo_pgsql
+RUN docker-php-ext-install ftp
 
 COPY core/memcached.conf /etc/memcached.conf
 
