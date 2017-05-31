@@ -2,142 +2,91 @@
 ## Use this docker-compose.yml to create a complete development environment using several Actency Docker images:
 
     version: '2'
-    services:
-      # web with xdebug - actency images
-      web:
-        # geniousinteractive/docker-apache-php available tags: latest, 5.6, 5.5, 5.4, 5.3
-        image: geniousinteractive/docker-apache-php:7.0
-        ports:
-          - "80:80"
-          - "9000:9000"
-        environment:
-          - SERVERNAME=example.local
-          - SERVERALIAS=example2.local *.example2.local
-          - DOCUMENTROOT=htdocs
-        volumes:
-          - /home/docker/projets/example/:/var/www/html/
-          - ./root:/root/
-          - /home/docker/.ssh/:/var/www/.ssh/
-        links:
-          - database:mysql
-          - mailhog
-          - solr
-          - redis
-          - tika
-        tty: true
-        # Set logs driver to fluentd only if you enable the logs container
-        # Add this logging section to any other container if you want the logs to be sent in es-fluentd-kibana container
-        logging:
-          driver: fluentd
-          options:
-            fluentd-address: "127.0.0.1:24224"
-
-      # logs container - actency images
-      logs:
-        image: actency/docker-es-fluentd-kibana
-        ports:
-          - "8000:5601" # browse this port to see the logs in kibana
-          - "9200:9200"
-          - "9300:9300"
-          - "24224:24224"
-
-      # database container - actency images
-      database:
-        # actency/docker-mysql available tags: latest, 5.7, 5.6, 5.5
-        image: actency/docker-mysql:5.7
-        ports:
-          - "3306:3306"
-        environment:
-          - MYSQL_ROOT_PASSWORD=mysqlroot
-          - MYSQL_DATABASE=example
-          - MYSQL_USER=example_user
-          - MYSQL_PASSWORD=mysqlpwd
-
-      # phpmyadmin container - actency images
-      phpmyadmin:
-        image: actency/docker-phpmyadmin
-        ports:
-          - "8010:80"
-        environment:
-          - MYSQL_ROOT_PASSWORD=mysqlroot
-          - UPLOAD_SIZE=1G
-        links:
-          - database:mysql
-
-      # mailhog container - official images
-      mailhog:
-        image: mailhog/mailhog
-        ports:
-          - "1025:1025"
-          - "8025:8025"
-
-      # solr container - actency images
-      solr:
-        # actency/docker-solr available tags: latest, 6.2, 6.1, 6.0, 5.5, 5.4, 5.3, 5.2, 5.1, 5.0, 4.10, 3.6
-        image: actency/docker-solr:6.2
-        ports:
-          - "8080:8983"
-
-      # redis container - official images
-      redis:
-        image: redis:latest
-        ports:
-          - "6379"
-
-      # phpRedisAdmin container - actency images
-      phpredisadmin:
-        image: actency/docker-phpredisadmin
-        ports:
-          - "9900:80"
-        environment:
-          - REDIS_1_HOST=redis
-        links:
-          - redis
-
-      # Tika server container - actency images
-      tika:
-        image: actency/docker-tika-server
-        ports:
-          - "9998:9998"
-
-    # ##### PROFILING SECTION - EXPERIMENTAL #####
-    #   # Uncomment this block to enable 3 containers for profiling.
-    #   # xhprof data will be stored in mongodb and available through the xhgui interface.
-    #
-    #   # web with xhprof - actency images
-    #   web-prof:
-    #     # actency/docker-apache-php-xhprof available tags: latest, 7.0, 5.6, 5.5, 5.4
-    #     image: actency/docker-apache-php-xhprof:7.0
-    #     ports:
-    #       - "8050:80"
-    #     environment:
-    #       - SERVERNAME=example.local
-    #       - SERVERALIAS=example2.local *.example2.local
-    #       - DOCUMENTROOT=htdocs
-    #     volumes:
-    #       - /home/docker/projets/example/:/var/www/html/
-    #       - /home/docker/.ssh/:/var/www/.ssh/
-    #     links:
-    #       - database:mysql
-    #       - mailhog
-    #       - solr
-    #       - redis
-    #       - tika
-    #       - mongo
-    #     tty: true
-    #
-    #   # mongo container - official images
-    #   mongo:
-    #     image: mongo
-    #     ports:
-    #       - "27017:27017"
-    #
-    #   # xhgui container - actency image
-    #   xhgui:
-    #     image: actency/docker-xhgui
-    #     ports:
-    #       - "8040:80"
-    #     links:
-    #       - mongo
-    # ##### END OF PROFILING SECTION #####
+services:
+  web:
+    image: geniousinteractive/docker-apache-php:5.6
+    ports:
+      - "80:80"
+    environment:
+      - SERVERNAME=domaine.dd
+      - SERVERALIAS=*.domaine.dd
+    volumes:
+      - ./source:/var/www/html/
+    links:
+      - database:mysql
+      - mailhog
+      - memcache
+      - solr
+    tty: true
+  database:
+    image: geniousinteractive/docker-mysql:mariadb
+    environment:
+      MYSQL_ALLOW_EMPTY_PASSWORD: 'yes'
+  phpmyadmin:
+    image: geniousinteractive/docker-phpmyadmin
+    ports:
+      - "8010:80"
+    environment:
+      - MYSQL_ROOT_PASSWORD=
+      - UPLOAD_SIZE=2G
+    links:
+      - database:mysql
+  mailhog:
+    image: mailhog/mailhog
+    ports:
+      - "1025:1025"
+      - "8025:8025"
+  memcache:
+    image: memcached
+    ports:
+      - "11211:11211"
+    command: memcached -m 64
+  solr:
+    image: actency/docker-solr:4.10
+    ports:
+      - "8983:8983"
+#
+#	DEBUG
+#
+#  web-prof:
+#    image: actency/docker-apache-php-xhprof:5.6
+#    ports:
+#      - "8050:80"
+#    environment:
+#      - SERVERNAME=isover.dd
+#      - SERVERALIAS=*.isover.dd
+#    volumes:
+#      - ./isover-master/docroot:/var/www/html/
+#      - ./root:/root/
+#    links:
+#      - database:mysql
+#      - mailhog
+#      - memcache
+#      - solr
+#    tty: true
+#   # mongo container - official images
+#  mongo:
+#     image: mongo
+#     ports:
+#       - "27017:27017"
+#   # xhgui container - actency image
+#  xhgui:
+#     image: actency/docker-xhgui
+#     ports:
+#       - "8040:80"
+#     links:
+#       - mongo
+#  varnish:
+#    image: wodby/drupal-varnish
+#    depends_on:
+#      - web
+#    environment:
+#      VARNISH_SECRET: secret
+#      VARNISH_BACKEND_HOST: web
+#      VARNISH_BACKEND_PORT: 80
+#      VARNISH_MEMORY_SIZE: 256M
+#      VARNISH_STORAGE_SIZE: 1024M
+#    ports:
+#      - "8081:6081" # HTTP Proxy
+#      - "8005:6082" # Control terminal
 
