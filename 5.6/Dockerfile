@@ -151,6 +151,10 @@ RUN ( \
 
 RUN a2enmod rewrite expires && service apache2 restart
 
+# Installation of WP-CLI
+RUN wget https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar -O /usr/local/bin/wp
+RUN chmod +x /usr/local/bin/wp
+
 # install phing
 RUN pear channel-discover pear.phing.info && pear install [--alldeps] phing/phing
 
@@ -184,6 +188,10 @@ RUN chmod -R 600 /var/www/.ssh/
 
 # Set timezone to Europe/Paris
 RUN echo "Europe/Paris" > /etc/timezone && dpkg-reconfigure -f noninteractive tzdata
+
+# ADD BASHRC CONFIG
+COPY config/bashrc /root/
+RUN mv /root/bashrc /root/.bashrc
 
 # Expose 80 for apache, 9000 for xdebug
 EXPOSE 80 9000
