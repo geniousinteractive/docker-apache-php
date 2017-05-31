@@ -53,11 +53,10 @@
 	#    ports:
 	#      - "8050:80"
 	#    environment:
-	#      - SERVERNAME=isover.dd
-	#      - SERVERALIAS=*.isover.dd
+	#      - SERVERNAME=domaine.dd
+	#      - SERVERALIAS=*.domaine.dd
 	#    volumes:
-	#      - ./isover-master/docroot:/var/www/html/
-	#      - ./root:/root/
+	#      - ./source/docroot:/var/www/html/
 	#    links:
 	#      - database:mysql
 	#      - mailhog
