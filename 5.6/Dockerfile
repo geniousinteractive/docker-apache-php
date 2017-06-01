@@ -178,7 +178,6 @@ RUN \curl -L https://get.rvm.io | rvm_path=/opt/rvm bash -s stable
 RUN /bin/bash -l -c "/opt/rvm/bin/rvm requirements"
 
 # Our apache volume
-VOLUME /root
 VOLUME /var/www/html
 
 # create directory for ssh keys
