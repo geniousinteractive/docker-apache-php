@@ -85,8 +85,9 @@ COPY core/memcached.conf /etc/memcached.conf
     gem install compass; \
 
     # Installation node.js
-    curl -sL https://deb.nodesource.com/setup_0.12 | sudo bash -; \
-    DEBIAN_FRONTEND=noninteractive apt-get -yq --no-install-recommends install -y nodejs; \
+    RUN curl -sL https://deb.nodesource.com/setup_8.x | sudo bash -
+   RUN DEBIAN_FRONTEND=noninteractive apt-get -yq --no-install-recommends install -y nodejs
+
 
     # Installation of LESS
     npm update -g npm && \
