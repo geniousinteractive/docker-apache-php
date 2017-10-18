@@ -79,7 +79,7 @@ RUN curl -sL https://deb.nodesource.com/setup_8.x | sudo bash -
 RUN DEBIAN_FRONTEND=noninteractive apt-get -yq --no-install-recommends install -y nodejs
 
 # Installation of LESS
-RUN npm update -g npm && \
+RUN npm update -g npm@latest && \
 npm install -g less && npm install -g less-plugin-clean-css
 
 # Installation of Grunt
