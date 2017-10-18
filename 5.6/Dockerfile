@@ -106,7 +106,7 @@ COPY core/memcached.conf /etc/memcached.conf
 
     # Installation of drush
     git clone https://github.com/drush-ops/drush.git /usr/local/src/drush; \
-    cd /usr/local/src/drush && git checkout 8.1.2; \
+    cd /usr/local/src/drush && git checkout 8.1.15; \
     ln -s /usr/local/src/drush/drush /usr/bin/drush; \
     cd /usr/local/src/drush && composer update && composer install; \
 
