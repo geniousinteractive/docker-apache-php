@@ -65,7 +65,8 @@ RUN docker-php-ext-configure gd --with-jpeg-dir=/usr/include/ \
   exif \
   pgsql \
   pdo_pgsql \
-  ftp
+  ftp \
+  bcmath
 
 RUN pecl install yaml-2.0.0 && echo "extension=yaml.so" > /usr/local/etc/php/conf.d/ext-yaml.ini
 
