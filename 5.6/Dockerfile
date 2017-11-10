@@ -68,7 +68,8 @@ RUN docker-php-ext-configure gd --with-jpeg-dir=/usr/include/ \
   pgsql \
   pdo_pgsql \
   ftp \
-  bcmath
+  bcmath \
+  ldap
 
 COPY core/memcached.conf /etc/memcached.conf
 
