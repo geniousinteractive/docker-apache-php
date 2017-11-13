@@ -51,8 +51,8 @@ RUN pecl install imagick
 COPY docker-php-ext-install /usr/local/bin/
 RUN chmod +x /usr/local/bin/docker-php-ext-install
 RUN docker-php-ext-configure gd --with-jpeg-dir=/usr/include/ \
-  ldap --with-libdir=lib/x86_64-linux-gnu/ \
-&& docker-php-ext-install \
+  ldap --with-libdir=/usr/lib/x86_64-linux-gnu/ && \
+  docker-php-ext-install \
   gd \
   mbstring \
   mcrypt \
