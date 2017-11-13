@@ -31,7 +31,6 @@ RUN apt-get clean && apt-get update && apt-get install -y --fix-missing \
   libpq-dev \
   ntp \
   bash-completion \
-  ldap-utils \
   libldap2-dev \
 
 # postgresql-client-9.5
@@ -53,7 +52,7 @@ RUN pecl install imagick
 COPY docker-php-ext-install /usr/local/bin/
 RUN chmod +x /usr/local/bin/docker-php-ext-install
 RUN docker-php-ext-configure gd --with-jpeg-dir=/usr/include/ \
-RUN docker-php-ext-configure ldap --with-libdir=lib/x86_64-linux-gnu/ \
+  ldap --with-libdir=lib/x86_64-linux-gnu/ \
 && docker-php-ext-install \
   gd \
   mbstring \
