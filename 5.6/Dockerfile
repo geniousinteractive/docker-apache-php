@@ -68,7 +68,7 @@ RUN docker-php-ext-configure gd --with-jpeg-dir=/usr/include/ \
   exif \
   pgsql \
   pdo_pgsql \
-  ftp
+  ftp \
   bcmath \
   ldap
 
