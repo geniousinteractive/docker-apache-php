@@ -31,7 +31,8 @@ RUN apt-get clean && apt-get update && apt-get install -y --fix-missing \
   libpq-dev \
   ntp \
   bash-completion \
-  libldap2-dev 
+  libldap2-dev \
+  gnupg
 
 # postgresql-client-9.5
 RUN wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo apt-key add - && echo "deb http://apt.postgresql.org/pub/repos/apt/ jessie-pgdg main" >> /etc/apt/sources.list && apt-get update && apt-get install -y postgresql-client-9.5
