@@ -2,7 +2,7 @@
 FROM php:7.1-apache
 COPY config/php.ini /usr/local/etc/php/
 
-RUN apt-get clean && apt-get update && apt-get install --fix-missing wget -y
+RUN apt-get clean && apt-get update && apt-get install --fix-missing wget gnupg -y
 RUN echo "deb http://packages.dotdeb.org jessie all" >> /etc/apt/sources.list
 RUN echo "deb-src http://packages.dotdeb.org jessie all" >> /etc/apt/sources.list
 RUN cd /tmp && wget https://www.dotdeb.org/dotdeb.gpg && apt-key add dotdeb.gpg
@@ -34,8 +34,7 @@ RUN apt-get clean && apt-get update && apt-get install --fix-missing -y \
   libicu-dev \
   libpq-dev \
   bash-completion \
-  libldap2-dev \
-  gnupg
+  libldap2-dev
 
 # postgresql-client-9.5
 RUN wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo apt-key add - && echo "deb http://apt.postgresql.org/pub/repos/apt/ jessie-pgdg main" >> /etc/apt/sources.list && apt-get update && apt-get install -y postgresql-client-9.5
