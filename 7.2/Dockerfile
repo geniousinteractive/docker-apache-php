@@ -52,8 +52,6 @@ RUN pecl install mcrypt-1.0.1
 
 COPY docker-php-ext-install /usr/local/bin/
 RUN chmod +x /usr/local/bin/docker-php-ext-install
-RUN docker-php-ext-configure gd --with-jpeg-dir=/usr/include/
-RUN docker-php-ext-configure ldap --with-libdir=lib/x86_64-linux-gnu/
 RUN docker-php-ext-install \
   gd \
   mbstring \
@@ -73,6 +71,8 @@ RUN docker-php-ext-install \
   ldap
 
 RUN docker-php-ext-enable mcrypt
+RUN docker-php-ext-configure gd --with-jpeg-dir=/usr/include/
+RUN docker-php-ext-configure ldap --with-libdir=lib/x86_64-linux-gnu/
 
 RUN pecl install yaml-2.0.0 && echo "extension=yaml.so" > /usr/local/etc/php/conf.d/ext-yaml.ini
 
