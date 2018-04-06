@@ -2,12 +2,14 @@
 FROM php:7.2-apache
 COPY config/php.ini /usr/local/etc/php/
 
-RUN apt-get clean && apt-get update && apt-get install --fix-missing wget gnupg apt-transport-https -y
+RUN apt-get clean && apt-get update && apt-get install --fix-missing wget gnupg -y
 RUN echo "deb http://packages.dotdeb.org jessie all" >> /etc/apt/sources.list
 RUN echo "deb-src http://packages.dotdeb.org jessie all" >> /etc/apt/sources.list
 RUN cd /tmp && wget https://www.dotdeb.org/dotdeb.gpg && apt-key add dotdeb.gpg
 
-RUN apt-get clean && apt-get update && apt-get install --fix-missing -y \
+RUN apt-get clean
+RUN apt-get update
+RUN apt-get install --fix-missing -y \
   ruby-dev \
   rubygems \
   graphviz \
