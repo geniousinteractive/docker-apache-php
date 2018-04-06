@@ -20,13 +20,12 @@ RUN apt-get install --fix-missing -y \
   memcached \
   libmemcached-tools \
   libmemcached-dev \
-  libpng12-dev \
+  libpng-dev \
   libjpeg62-turbo-dev \
   libmcrypt-dev \
   libxml2-dev \
   libxslt1-dev \
   mysql-client \
-  php5-mysqlnd \
   zip \
   wget \
   linux-libc-dev \
