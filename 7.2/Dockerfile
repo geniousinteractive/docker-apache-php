@@ -48,6 +48,7 @@ RUN touch /usr/local/etc/php/conf.d/memcached.ini &&\
 
 RUN apt-get install pkg-config libmagickwand-dev -y
 RUN pecl install imagick
+RUN pecl install mcrypt-1.0.1
 
 COPY docker-php-ext-install /usr/local/bin/
 RUN chmod +x /usr/local/bin/docker-php-ext-install
@@ -56,7 +57,6 @@ RUN docker-php-ext-configure ldap --with-libdir=lib/x86_64-linux-gnu/
 RUN docker-php-ext-install \
   gd \
   mbstring \
-  mcrypt \
   zip \
   soap \
   pdo_mysql \
@@ -72,6 +72,7 @@ RUN docker-php-ext-install \
   bcmath \
   ldap
 
+RUN docker-php-ext-enable mcrypt
 
 RUN pecl install yaml-2.0.0 && echo "extension=yaml.so" > /usr/local/etc/php/conf.d/ext-yaml.ini
 
