@@ -50,10 +50,9 @@ RUN apt-get install pkg-config libmagickwand-dev -y
 RUN pecl install imagick
 RUN pecl install mcrypt-1.0.1
 
-COPY docker-php-ext-install /usr/local/bin/
-RUN chmod +x /usr/local/bin/docker-php-ext-install
-RUN set -x \
-  && docker-php-ext-install \
+#COPY docker-php-ext-install /usr/local/bin/
+#RUN chmod +x /usr/local/bin/docker-php-ext-install
+RUN docker-php-ext-install \
   gd \
   mbstring \
   zip \
