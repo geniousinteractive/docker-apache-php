@@ -50,26 +50,7 @@ RUN apt-get install pkg-config libmagickwand-dev -y
 RUN pecl install imagick
 RUN pecl install mcrypt-1.0.1
 
-#COPY docker-php-ext-install /usr/local/bin/
-#RUN chmod +x /usr/local/bin/docker-php-ext-install
-RUN docker-php-ext-install \
-  gd \
-  mbstring \
-  zip \
-  soap \
-  pdo_mysql \
-  mysqli \
-  xsl \
-  opcache \
-  calendar \
-  intl \
-  exif \
-  pgsql \
-  pdo_pgsql \
-  ftp \
-  bcmath \
-  ldap
-
+RUN docker-php-ext-install gd mbstring zip soap pdo_mysql mysqli xsl opcache calendar intl exif pgsql pdo_pgsql ftp bcmath ldap
 RUN docker-php-ext-enable mcrypt
 RUN docker-php-ext-configure gd --with-jpeg-dir=/usr/include/
 RUN docker-php-ext-configure ldap --with-libdir=lib/x86_64-linux-gnu/
