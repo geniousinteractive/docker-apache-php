@@ -1,5 +1,5 @@
 # Pull base image.
-FROM php:7.2-apache
+FROM php:7.2-apache-stretch
 COPY config/php.ini /usr/local/etc/php/
 
 RUN apt-get clean && apt-get update && apt-get install --fix-missing wget gnupg -y
