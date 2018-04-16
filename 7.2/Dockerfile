@@ -47,6 +47,7 @@ RUN touch /usr/local/etc/php/conf.d/memcached.ini &&\
  echo "extension=/usr/local/lib/php/extensions/no-debug-non-zts-20170718/memcached.so" >> /usr/local/etc/php/conf.d/memcached.ini
 
 RUN echo 'extension_dir = /usr/local/lib/php/extensions/no-debug-non-zts-20170718/' >> /usr/local/etc/php/php.ini
+RUN php -r 'echo ini_get("extension_dir");'
 RUN apt-get install pkg-config libmagickwand-dev -y
 RUN pecl install imagick
 RUN pecl install mcrypt-1.0.1
