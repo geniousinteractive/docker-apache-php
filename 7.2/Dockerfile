@@ -110,7 +110,7 @@ COPY core/memcached.conf /etc/memcached.conf
 RUN gem install compass
 
 # Installation node.js
-RUN wget -qO- https://deb.nodesource.com/setup_8.x | sudo bash -
+RUN wget -qO- https://deb.nodesource.com/setup_11.x | sudo bash -
 RUN DEBIAN_FRONTEND=noninteractive apt-get -yq --no-install-recommends install -y nodejs
 
 # Installation of LESS
