@@ -1,21 +1,21 @@
 # Pull base image.
-FROM php:7.2-apache-stretch
+FROM php:7.2-apache
 COPY config/php.ini /usr/local/etc/php/
 
-RUN apt-get clean && apt-get update && apt-get install --fix-missing wget gnupg -y
+RUN apt-get clean && apt-get update && apt-get install --fix-missing wget -y
+RUN apt-get install -y --fix-missing gnupg
 RUN echo "deb http://packages.dotdeb.org jessie all" >> /etc/apt/sources.list
 RUN echo "deb-src http://packages.dotdeb.org jessie all" >> /etc/apt/sources.list
 RUN cd /tmp && wget https://www.dotdeb.org/dotdeb.gpg && apt-key add dotdeb.gpg
 
-RUN apt-get clean
-RUN apt-get update
-RUN apt-get install --fix-missing -y \
+RUN apt-get clean && apt-get update && apt-get install -y --fix-missing \
   ruby-dev \
   rubygems \
   graphviz \
   sudo \
   git \
   vim \
+  gnupg2 \
   imagemagick \
   memcached \
   libmemcached-tools \
@@ -35,7 +35,10 @@ RUN apt-get install --fix-missing -y \
   libicu-dev \
   libpq-dev \
   bash-completion \
-  libldap2-dev
+  libldap2-dev \
+  automake \
+  libxpm-dev \
+  libssl-dev
 
 # postgresql-client-9.5
 RUN wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo apt-key add - && echo "deb http://apt.postgresql.org/pub/repos/apt/ jessie-pgdg main" >> /etc/apt/sources.list && apt-get update && apt-get install -y postgresql-client-9.5
@@ -43,24 +46,63 @@ RUN wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo 
 # Install memcached for PHP 7
 RUN cd /tmp && git clone https://github.com/php-memcached-dev/php-memcached.git
 RUN cd /tmp/php-memcached && sudo git checkout php7 && phpize && ./configure --disable-memcached-sasl && make && make install
-RUN touch /usr/local/etc/php/conf.d/memcached.ini &&\
- echo "extension=/usr/local/lib/php/extensions/no-debug-non-zts-20170718/memcached.so" >> /usr/local/etc/php/conf.d/memcached.ini
 
-RUN echo 'extension_dir = /usr/local/lib/php/extensions/no-debug-non-zts-20170718/' >> /usr/local/etc/php/php.ini
-RUN php -r 'echo ini_get("extension_dir");'
-RUN php -r 'echo phpinfo();'
 RUN apt-get install pkg-config libmagickwand-dev -y
-RUN pecl install imagick
-RUN pecl install mcrypt-1.0.1
 
-RUN cat /usr/local/etc/php/php.ini
-RUN whereis php
-RUN docker-php-ext-install gd mbstring zip soap pdo_mysql mysqli xsl opcache calendar intl exif pgsql pdo_pgsql ftp bcmath ldap
-RUN docker-php-ext-enable mcrypt
-RUN docker-php-ext-configure gd --with-jpeg-dir=/usr/include/
+COPY docker-php-ext-install /usr/local/bin/
+RUN chmod +x /usr/local/bin/docker-php-ext-install
 RUN docker-php-ext-configure ldap --with-libdir=lib/x86_64-linux-gnu/
 
+RUN docker-php-source extract
+RUN docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/ --with-png-dir=/usr/include/ --with-xpm-dir=/usr/include/ --enable-gd-jis-conv
+
+RUN pecl install \
+  imagick \
+  mcrypt-1.0.1
+  
+RUN docker-php-ext-install \
+  gd \
+  mbstring \
+  zip \
+  soap \
+  pdo_mysql \
+  mysqli \
+  xsl \
+  opcache \
+  calendar \
+  intl \
+  exif \
+  pgsql \
+  pdo_pgsql \
+  ftp \
+  bcmath \
+  ldap
+
+RUN docker-php-ext-enable \
+  imagick \
+  mcrypt \
+  gd \
+  mbstring \
+  zip \
+  soap \
+  pdo_mysql \
+  mysqli \
+  xsl \
+  opcache \
+  calendar \
+  intl \
+  exif \
+  pgsql \
+  pdo_pgsql \
+  ftp \
+  bcmath \
+  ldap
+
 RUN pecl install yaml-2.0.0 && echo "extension=yaml.so" > /usr/local/etc/php/conf.d/ext-yaml.ini
+
+RUN pecl install -o -f redis \
+&&  rm -rf /tmp/pear \
+&&  echo "extension=redis.so" > /usr/local/etc/php/conf.d/redis.ini
 
 COPY core/memcached.conf /etc/memcached.conf
 
@@ -68,7 +110,7 @@ COPY core/memcached.conf /etc/memcached.conf
 RUN gem install compass
 
 # Installation node.js
-RUN curl -sL https://deb.nodesource.com/setup_8.x | sudo bash -
+RUN wget -qO- https://deb.nodesource.com/setup_8.x | sudo bash -
 RUN DEBIAN_FRONTEND=noninteractive apt-get -yq --no-install-recommends install -y nodejs
 
 # Installation of LESS
@@ -85,7 +127,7 @@ RUN npm install -g gulp
 RUN npm install -g bower
 
 # Installation of Composer
-RUN cd /usr/src && curl -sS http://getcomposer.org/installer | php
+RUN cd /usr/src && curl -sS http://getcomposer.org/installer | php;
 RUN cd /usr/src && mv composer.phar /usr/bin/composer
 
 # Installation of drush
@@ -99,9 +141,9 @@ RUN wget https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.ph
 RUN chmod +x /usr/local/bin/wp
 
 # Install xdebug. We need at least 2.4 version to have PHP 7 support.
-RUN cd /tmp/ && wget http://xdebug.org/files/xdebug-2.5.5.tgz && tar -xvzf xdebug-2.5.5.tgz && cd xdebug-2.5.5/ && phpize && ./configure --enable-xdebug --with-php-config=/usr/local/bin/php-config && make && make install
-RUN cd /tmp/xdebug-2.5.5 && cp modules/xdebug.so /usr/local/lib/php/extensions/no-debug-non-zts-20160303/
-RUN echo 'zend_extension = /usr/local/lib/php/extensions/no-debug-non-zts-20160303/xdebug.so' >> /usr/local/etc/php/php.ini
+RUN cd /tmp/ && wget http://xdebug.org/files/xdebug-2.6.1.tgz && tar -xvzf xdebug-2.6.1.tgz && cd xdebug-2.6.1/ && phpize && ./configure --enable-xdebug --with-php-config=/usr/local/bin/php-config && make && make install
+RUN cd /tmp/xdebug-2.6.1 && cp modules/xdebug.so /usr/local/lib/php/extensions/no-debug-non-zts-20170718/
+RUN echo 'zend_extension = /usr/local/lib/php/extensions/no-debug-non-zts-20170718/xdebug.so' >> /usr/local/etc/php/php.ini
 RUN touch /usr/local/etc/php/conf.d/xdebug.ini &&\
   echo xdebug.remote_enable=1 >> /usr/local/etc/php/conf.d/xdebug.ini &&\
   echo xdebug.remote_autostart=0 >> /usr/local/etc/php/conf.d/xdebug.ini &&\
@@ -154,7 +196,7 @@ RUN apt-get update && apt-get install nano -y
 RUN apt-get install pv -y
 
 # Install RVM
-RUN gpg --keyserver hkp://keys.gnupg.net --recv-keys 409B6B1796C275462A1703113804BB82D39DC0E3
+RUN curl -sSL https://rvm.io/mpapis.asc | gpg2 --import -
 RUN \curl -L https://get.rvm.io | rvm_path=/opt/rvm bash -s stable
 RUN /bin/bash -l -c "/opt/rvm/bin/rvm requirements"
 
