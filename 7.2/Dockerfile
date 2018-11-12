@@ -198,9 +198,9 @@ RUN apt-get update && apt-get install nano -y
 RUN apt-get install pv -y
 
 # Install RVM
-# RUN curl -sSL https://rvm.io/mpapis.asc | gpg2 --import -
-# RUN \curl -L https://get.rvm.io | rvm_path=/opt/rvm bash -s stable
-# RUN /bin/bash -l -c "/opt/rvm/bin/rvm requirements"
+RUN gpg --no-tty --keyserver hkp://keys.gnupg.net --recv-keys 409B6B1796C275462A1703113804BB82D39DC0E3
+RUN curl -L https://get.rvm.io | rvm_path=/opt/rvm bash -s stable
+RUN /bin/bash -l -c "/opt/rvm/bin/rvm requirements"
 
 # Our apache volume
 VOLUME /var/www/html
