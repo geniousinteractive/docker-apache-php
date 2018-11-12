@@ -2,7 +2,7 @@
 FROM php:7.1-apache
 COPY config/php.ini /usr/local/etc/php/
 
-RUN apt-get clean && apt-get update && apt-get install --fix-missing wget gnupg -y
+RUN apt-get clean && apt-get update && apt-get install --fix-missing wget -y
 RUN echo "deb http://packages.dotdeb.org jessie all" >> /etc/apt/sources.list
 RUN echo "deb-src http://packages.dotdeb.org jessie all" >> /etc/apt/sources.list
 RUN cd /tmp && wget https://www.dotdeb.org/dotdeb.gpg && apt-key add dotdeb.gpg
@@ -34,8 +34,7 @@ RUN apt-get clean && apt-get update && apt-get install --fix-missing -y \
   libicu-dev \
   libpq-dev \
   bash-completion \
-  libldap2-dev \
-  apt-transport-https
+  libldap2-dev 
 
 # postgresql-client-9.5
 RUN wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo apt-key add - && echo "deb http://apt.postgresql.org/pub/repos/apt/ jessie-pgdg main" >> /etc/apt/sources.list && apt-get update && apt-get install -y postgresql-client-9.5
@@ -81,7 +80,7 @@ COPY core/memcached.conf /etc/memcached.conf
 RUN gem install compass
 
 # Installation node.js
-RUN wget -qO- https://deb.nodesource.com/setup_11.x | sudo bash -
+RUN curl -sL https://deb.nodesource.com/setup_8.x | sudo bash -
 RUN DEBIAN_FRONTEND=noninteractive apt-get -yq --no-install-recommends install -y nodejs
 
 # Installation of LESS
@@ -112,8 +111,8 @@ RUN wget https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.ph
 RUN chmod +x /usr/local/bin/wp
 
 # Install xdebug. We need at least 2.4 version to have PHP 7 support.
-RUN cd /tmp/ && wget http://xdebug.org/files/xdebug-2.6.1.tgz && tar -xvzf xdebug-2.6.1.tgz && cd xdebug-2.6.1/ && phpize && ./configure --enable-xdebug --with-php-config=/usr/local/bin/php-config && make && make install
-RUN cd /tmp/xdebug-2.6.1 && cp modules/xdebug.so /usr/local/lib/php/extensions/no-debug-non-zts-20160303/
+RUN cd /tmp/ && wget http://xdebug.org/files/xdebug-2.5.5.tgz && tar -xvzf xdebug-2.5.5.tgz && cd xdebug-2.5.5/ && phpize && ./configure --enable-xdebug --with-php-config=/usr/local/bin/php-config && make && make install
+RUN cd /tmp/xdebug-2.5.5 && cp modules/xdebug.so /usr/local/lib/php/extensions/no-debug-non-zts-20160303/
 RUN echo 'zend_extension = /usr/local/lib/php/extensions/no-debug-non-zts-20160303/xdebug.so' >> /usr/local/etc/php/php.ini
 RUN touch /usr/local/etc/php/conf.d/xdebug.ini &&\
   echo xdebug.remote_enable=1 >> /usr/local/etc/php/conf.d/xdebug.ini &&\
@@ -167,8 +166,8 @@ RUN apt-get update && apt-get install nano -y
 RUN apt-get install pv -y
 
 # Install RVM
-RUN gpg --no-tty --keyserver hkp://keys.gnupg.net --recv-keys 409B6B1796C275462A1703113804BB82D39DC0E3
-RUN curl -L https://get.rvm.io | rvm_path=/opt/rvm bash -s stable
+RUN gpg --keyserver hkp://keys.gnupg.net --recv-keys 409B6B1796C275462A1703113804BB82D39DC0E3
+RUN \curl -L https://get.rvm.io | rvm_path=/opt/rvm bash -s stable
 RUN /bin/bash -l -c "/opt/rvm/bin/rvm requirements"
 
 # Our apache volume
