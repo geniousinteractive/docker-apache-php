@@ -51,6 +51,7 @@ RUN touch /usr/local/etc/php/conf.d/memcached.ini &&\
 
 RUN apt-get install pkg-config libmagickwand-dev -y
 RUN pecl install imagick
+RUN docker-php-ext-enable imagick
 
 COPY docker-php-ext-install /usr/local/bin/
 RUN chmod +x /usr/local/bin/docker-php-ext-install
