@@ -49,10 +49,6 @@ RUN cd /tmp/php-memcached && sudo git checkout php7 && phpize && ./configure --d
 RUN touch /usr/local/etc/php/conf.d/memcached.ini &&\
  echo "extension=/usr/local/lib/php/extensions/no-debug-non-zts-20160303/memcached.so" >> /usr/local/etc/php/conf.d/memcached.ini
 
-RUN apt-get install pkg-config libmagickwand-dev -y
-RUN pecl install imagick
-RUN docker-php-ext-enable imagick
-
 COPY docker-php-ext-install /usr/local/bin/
 RUN chmod +x /usr/local/bin/docker-php-ext-install
 RUN docker-php-ext-configure gd --with-jpeg-dir=/usr/include/
@@ -100,7 +96,7 @@ RUN gem install sass -v 3.5.6 ;\
     gem install compass;
 
 # Installation node.js
-RUN curl -sL https://deb.nodesource.com/setup_11.x | bash - && \
+RUN curl -sL https://deb.nodesource.com/setup_8.x | bash - && \
 	apt-get update && apt-get install -y nodejs && \
 	npm install npm@latest -g
 
@@ -116,16 +112,6 @@ RUN npm install -g gulp
 # Installation of Bower
 RUN npm install -g bower
 
-# Install Nano
-RUN echo deb http://http.debian.net/debian jessie main >> /etc/apt/sources.list
-RUN apt-get update && apt-get install nano -y
-RUN apt-get install pv -y
-
-# Install RVM
-RUN gpg --keyserver hkp://keys.gnupg.net --recv-keys 409B6B1796C275462A1703113804BB82D39DC0E3
-RUN \curl -L https://get.rvm.io | rvm_path=/opt/rvm bash -s stable
-RUN /bin/bash -l -c "/opt/rvm/bin/rvm requirements"
-
 # Installation of Composer
 RUN cd /usr/src && curl -sS http://getcomposer.org/installer | php
 RUN cd /usr/src && mv composer.phar /usr/bin/composer
@@ -135,10 +121,6 @@ RUN git clone https://github.com/drush-ops/drush.git /usr/local/src/drush
 RUN cd /usr/local/src/drush && git checkout 9.1.0
 RUN ln -s /usr/local/src/drush/drush /usr/bin/drush
 RUN cd /usr/local/src/drush && composer update && composer install
-
-# Installation of WP-CLI
-RUN wget https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar -O /usr/local/bin/wp
-RUN chmod +x /usr/local/bin/wp
 
 # Install xdebug. We need at least 2.4 version to have PHP 7 support.
 RUN cd /tmp/ && wget http://xdebug.org/files/xdebug-2.5.1.tgz && tar -xvzf xdebug-2.5.1.tgz && cd xdebug-2.5.1/ && phpize && ./configure --enable-xdebug --with-php-config=/usr/local/bin/php-config && make && make install
