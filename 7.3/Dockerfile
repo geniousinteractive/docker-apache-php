@@ -68,7 +68,6 @@ RUN docker-php-ext-install \
   pdo_mysql \
   mysqli \
   xsl \
-  opcache \
   calendar \
   intl \
   exif \
@@ -87,7 +86,6 @@ RUN docker-php-ext-enable \
   pdo_mysql \
   mysqli \
   xsl \
-  opcache \
   calendar \
   intl \
   exif \
@@ -177,16 +175,6 @@ COPY config/apache2.conf /etc/apache2
 COPY core/envvars /etc/apache2
 COPY core/other-vhosts-access-log.conf /etc/apache2/conf-enabled/
 RUN rm /etc/apache2/sites-enabled/000-default.conf
-
-# Installation of Opcode cache
-RUN ( \
-  echo "opcache.memory_consumption=128"; \
-  echo "opcache.interned_strings_buffer=8"; \
-  echo "opcache.max_accelerated_files=4000"; \
-  echo "opcache.revalidate_freq=5"; \
-  echo "opcache.fast_shutdown=1"; \
-  echo "opcache.enable_cli=1"; \
-  ) > /usr/local/etc/php/conf.d/opcache-recommended.ini
 
 RUN a2enmod rewrite expires && service apache2 restart
 
