@@ -1,5 +1,5 @@
 # Pull base image.
-FROM php:7.2-apache
+FROM php:7.3-apache
 COPY config/php.ini /usr/local/etc/php/
 
 RUN apt-get clean && apt-get update && apt-get install --fix-missing wget -y
@@ -17,15 +17,17 @@ RUN apt-get clean && apt-get update && apt-get install -y --fix-missing \
   vim \
   gnupg2 \
   imagemagick \
+  libmagickwand-dev \
   memcached \
   libmemcached-tools \
   libmemcached-dev \
   libpng-dev \
   libjpeg62-turbo-dev \
-  libmcrypt-dev \
   libxml2-dev \
   libxslt1-dev \
   mysql-client \
+  zlib1g-dev \
+  libzip-dev \
   zip \
   wget \
   linux-libc-dev \
@@ -45,7 +47,7 @@ RUN wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo 
 
 # Install memcached for PHP 7
 RUN cd /tmp && git clone https://github.com/php-memcached-dev/php-memcached.git
-RUN cd /tmp/php-memcached && sudo git checkout php7 && phpize && ./configure --disable-memcached-sasl && make && make install
+RUN cd /tmp/php-memcached && phpize && ./configure --disable-memcached-sasl && make && make install
 
 RUN apt-get install pkg-config libmagickwand-dev -y
 
@@ -56,10 +58,8 @@ RUN docker-php-ext-configure ldap --with-libdir=lib/x86_64-linux-gnu/
 RUN docker-php-source extract
 RUN docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/ --with-png-dir=/usr/include/ --with-xpm-dir=/usr/include/ --enable-gd-jis-conv
 
-RUN pecl install \
-  imagick \
-  mcrypt-1.0.1
-  
+RUN pecl install imagick-3.4.3
+
 RUN docker-php-ext-install \
   gd \
   mbstring \
@@ -80,7 +80,6 @@ RUN docker-php-ext-install \
 
 RUN docker-php-ext-enable \
   imagick \
-  mcrypt \
   gd \
   mbstring \
   zip \
@@ -98,11 +97,15 @@ RUN docker-php-ext-enable \
   bcmath \
   ldap
 
-RUN pecl install yaml-2.0.0 && echo "extension=yaml.so" > /usr/local/etc/php/conf.d/ext-yaml.ini
+RUN pecl install yaml-2.0.4 && echo "extension=yaml.so" > /usr/local/etc/php/conf.d/ext-yaml.ini
 
 RUN pecl install -o -f redis \
 &&  rm -rf /tmp/pear \
 &&  echo "extension=redis.so" > /usr/local/etc/php/conf.d/redis.ini
+
+RUN apt-get install -y libmcrypt-dev && \
+    pecl install mcrypt-1.0.2 && \
+    docker-php-ext-enable mcrypt
 
 COPY core/memcached.conf /etc/memcached.conf
 
@@ -141,9 +144,9 @@ RUN wget https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.ph
 RUN chmod +x /usr/local/bin/wp
 
 # Install xdebug. We need at least 2.4 version to have PHP 7 support.
-RUN cd /tmp/ && wget http://xdebug.org/files/xdebug-2.6.1.tgz && tar -xvzf xdebug-2.6.1.tgz && cd xdebug-2.6.1/ && phpize && ./configure --enable-xdebug --with-php-config=/usr/local/bin/php-config && make && make install
-RUN cd /tmp/xdebug-2.6.1 && cp modules/xdebug.so /usr/local/lib/php/extensions/no-debug-non-zts-20170718/
-RUN echo 'zend_extension = /usr/local/lib/php/extensions/no-debug-non-zts-20170718/xdebug.so' >> /usr/local/etc/php/php.ini
+RUN cd /tmp/ && wget http://xdebug.org/files/xdebug-2.7.0beta1.tgz && tar -xvzf xdebug-2.7.0beta1.tgz && cd xdebug-2.7.0beta1/ && phpize && ./configure --enable-xdebug --with-php-config=/usr/local/bin/php-config && make && make install
+RUN cd /tmp/xdebug-2.7.0beta1 && cp modules/xdebug.so /usr/local/lib/php/extensions/no-debug-non-zts-20180731/
+RUN echo 'zend_extension = /usr/local/lib/php/extensions/no-debug-non-zts-20180731/xdebug.so' >> /usr/local/etc/php/php.ini
 RUN touch /usr/local/etc/php/conf.d/xdebug.ini &&\
   echo xdebug.remote_enable=1 >> /usr/local/etc/php/conf.d/xdebug.ini &&\
   echo xdebug.remote_autostart=0 >> /usr/local/etc/php/conf.d/xdebug.ini &&\
