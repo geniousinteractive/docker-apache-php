@@ -60,7 +60,19 @@ RUN docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-di
 
 RUN pecl install imagick-3.4.3
 
+# Install xdebug. We need at least 2.4 version to have PHP 7 support.
+RUN cd /tmp/ && wget http://xdebug.org/files/xdebug-2.7.0beta1.tgz && tar -xvzf xdebug-2.7.0beta1.tgz && cd xdebug-2.7.0beta1/ && phpize && ./configure --enable-xdebug --with-php-config=/usr/local/bin/php-config && make && make install
+RUN cd /tmp/xdebug-2.7.0beta1 && cp modules/xdebug.so /usr/local/lib/php/extensions/no-debug-non-zts-20180731/
+RUN echo 'zend_extension = /usr/local/lib/php/extensions/no-debug-non-zts-20180731/xdebug.so' >> /usr/local/etc/php/php.ini
+RUN touch /usr/local/etc/php/conf.d/xdebug.ini &&\
+  echo xdebug.remote_enable=1 >> /usr/local/etc/php/conf.d/xdebug.ini &&\
+  echo xdebug.remote_autostart=0 >> /usr/local/etc/php/conf.d/xdebug.ini &&\
+  echo xdebug.remote_connect_back=1 >> /usr/local/etc/php/conf.d/xdebug.ini &&\
+  echo xdebug.remote_port=9000 >> /usr/local/etc/php/conf.d/xdebug.ini &&\
+  echo xdebug.remote_log=/tmp/php5-xdebug.log >> /usr/local/etc/php/conf.d/xdebug.ini
+
 RUN docker-php-ext-install \
+  opcache \
   gd \
   mbstring \
   zip \
@@ -78,6 +90,7 @@ RUN docker-php-ext-install \
   ldap
 
 RUN docker-php-ext-enable \
+  opcache \
   imagick \
   gd \
   mbstring \
@@ -141,17 +154,6 @@ RUN cd /usr/local/src/drush && composer update && composer install
 RUN wget https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar -O /usr/local/bin/wp
 RUN chmod +x /usr/local/bin/wp
 
-# Install xdebug. We need at least 2.4 version to have PHP 7 support.
-RUN cd /tmp/ && wget http://xdebug.org/files/xdebug-2.7.0beta1.tgz && tar -xvzf xdebug-2.7.0beta1.tgz && cd xdebug-2.7.0beta1/ && phpize && ./configure --enable-xdebug --with-php-config=/usr/local/bin/php-config && make && make install
-RUN cd /tmp/xdebug-2.7.0beta1 && cp modules/xdebug.so /usr/local/lib/php/extensions/no-debug-non-zts-20180731/
-RUN echo 'zend_extension = /usr/local/lib/php/extensions/no-debug-non-zts-20180731/xdebug.so' >> /usr/local/etc/php/php.ini
-RUN touch /usr/local/etc/php/conf.d/xdebug.ini &&\
-  echo xdebug.remote_enable=1 >> /usr/local/etc/php/conf.d/xdebug.ini &&\
-  echo xdebug.remote_autostart=0 >> /usr/local/etc/php/conf.d/xdebug.ini &&\
-  echo xdebug.remote_connect_back=1 >> /usr/local/etc/php/conf.d/xdebug.ini &&\
-  echo xdebug.remote_port=9000 >> /usr/local/etc/php/conf.d/xdebug.ini &&\
-  echo xdebug.remote_log=/tmp/php5-xdebug.log >> /usr/local/etc/php/conf.d/xdebug.ini
-
 RUN rm -rf /var/www/html && \
   mkdir -p /var/lock/apache2 /var/run/apache2 /var/log/apache2 /var/www/html && \
   chown -R www-data:www-data /var/lock/apache2 /var/run/apache2 /var/log/apache2 /var/www/html
@@ -175,6 +177,19 @@ COPY config/apache2.conf /etc/apache2
 COPY core/envvars /etc/apache2
 COPY core/other-vhosts-access-log.conf /etc/apache2/conf-enabled/
 RUN rm /etc/apache2/sites-enabled/000-default.conf
+
+# Installation of Opcode cache
+RUN ( \
+  echo "zend_extension = opcache.so"; \
+  echo "opcache.memory_consumption=128"; \
+  echo "opcache.interned_strings_buffer=8"; \
+  echo "opcache.max_accelerated_files=4000"; \
+  echo "opcache.revalidate_freq=5"; \
+  echo "opcache.fast_shutdown=1"; \
+  echo "opcache.enable_cli=1"; \
+  echo "opcache.enable=1"; \
+  echo "opcache.optimization_level=0xFFFFFBFF"; \
+  ) > /usr/local/etc/php/conf.d/opcache-recommended.ini
 
 RUN a2enmod rewrite expires && service apache2 restart
 
