@@ -45,7 +45,7 @@ RUN docker-php-pecl-install \
   memcache-3.0.8 \
   yaml-1.2.0 \
   mongo-1.6.12
-  
+
   # Install Imagick
 RUN apt-get install -y libmagickwand-dev --no-install-recommends
 RUN pecl install imagick
@@ -74,8 +74,8 @@ RUN docker-php-ext-configure gd --with-jpeg-dir=/usr/include/ \
 COPY core/memcached.conf /etc/memcached.conf
 
   # install xdebug and codesniffer
-  RUN apt-get install --fix-missing php5-xdebug -y; \
-  pecl install xdebug; \
+  RUN apt-get install --fix-missing -y; \
+  pecl install xdebug-2.5.5; \
   echo 'zend_extension = /usr/local/lib/php/extensions/no-debug-non-zts-20131226/xdebug.so' >> /usr/local/etc/php/php.ini; \
   touch /usr/local/etc/php/conf.d/xdebug.ini &&\
     echo xdebug.remote_enable=1 >> /usr/local/etc/php/conf.d/xdebug.ini &&\
@@ -120,6 +120,7 @@ COPY core/memcached.conf /etc/memcached.conf
   RUN cd /var/www/.drush && rm *.zip;
   RUN sudo usermod -u 1000 www-data
   RUN chown -R www-data:www-data /var/www;
+  RUN sudo -u www-data drush cc drush;
 
     # Installation of PHP_CodeSniffer with Drupal coding standards.
     # See https://www.drupal.org/node/1419988#coder-composer
@@ -190,6 +191,10 @@ RUN chmod -R 600 /var/www/.ssh/
 
 # Set timezone to Europe/Paris
 RUN echo "Europe/Paris" > /etc/timezone && dpkg-reconfigure -f noninteractive tzdata
+
+# ADD BASHRC CONFIG
+COPY config/bashrc /root/
+RUN mv /root/bashrc /root/.bashrc
 
 # Expose 80 for apache, 9000 for xdebug
 EXPOSE 80 9000
