@@ -44,10 +44,20 @@ RUN apt-get clean && apt-get update && apt-get install -y --fix-missing \
 RUN wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo apt-key add - && echo "deb http://apt.postgresql.org/pub/repos/apt/ jessie-pgdg main" >> /etc/apt/sources.list && apt-get update && apt-get install -y postgresql-client-9.5
 
 # Install memcached for PHP 7
-RUN cd /tmp && git clone https://github.com/php-memcached-dev/php-memcached.git
-RUN cd /tmp/php-memcached && sudo git checkout php7 && phpize && ./configure --disable-memcached-sasl && make && make install
-RUN touch /usr/local/etc/php/conf.d/memcached.ini &&\
- echo "extension=/usr/local/lib/php/extensions/no-debug-non-zts-20160303/memcached.so" >> /usr/local/etc/php/conf.d/memcached.ini
+RUN curl -L -o /tmp/memcached.tar.gz "https://github.com/php-memcached-dev/php-memcached/archive/php7.tar.gz" \
+  && mkdir -p memcached \
+  && tar -C memcached -zxvf /tmp/memcached.tar.gz --strip 1 \
+  && ( \
+    cd memcached \
+    && phpize \
+    && ./configure \
+    && make -j$(nproc) \
+    && make install \
+  ) \
+  && rm -r memcached \
+  && rm /tmp/memcached.tar.gz \
+  && docker-php-ext-enable memcached
+
 
 RUN apt-get install pkg-config libmagickwand-dev -y
 
@@ -112,8 +122,8 @@ COPY core/memcached.conf /etc/memcached.conf
 RUN gem install compass
 
 # Installation node.js
-RUN wget -qO- https://deb.nodesource.com/setup_8.x | sudo bash -
-RUN DEBIAN_FRONTEND=noninteractive apt-get -yq --no-install-recommends install -y nodejs
+RUN curl -sL https://deb.nodesource.com/setup_11.x | bash -
+RUN apt-get install -y nodejs
 
 # Installation of LESS
 RUN npm update -g npm@latest && \
@@ -168,7 +178,7 @@ RUN phpcs --config-set installed_paths ~/.composer/vendor/drupal/coder/coder_sni
 # RUN composer global require bamarni/symfony-console-autocomplete
 
 # installation of ssmtp
-RUN DEBIAN_FRONTEND=noninteractive apt-get install --fix-missing -y ssmtp && rm -r /var/lib/apt/lists/*
+RUN DEBIAN_FRONTEND=noninteractive apt-get install --fix-missing -y msmtp && rm -r /var/lib/apt/lists/*
 ADD core/ssmtp.conf /etc/ssmtp/ssmtp.conf
 ADD core/php-smtp.ini /usr/local/etc/php/conf.d/php-smtp.ini
 
