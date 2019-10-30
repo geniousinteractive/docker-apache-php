@@ -1,24 +1,8 @@
 alias ll='ls -al'
+
 force_color_prompt='yes'
 PS1='${debian_chroot:+($debian_chroot)}\[\033[01;31m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ '
 alias ls="ls --color=auto"
-
-function xdebug() {
-  xdb_usage() { echo "usage xdebug: on|off" 1>&2; }
-
-  case "$1" in
-    on)
-        sudo sed -i 's/^;*\(.*xdebug\.so\)/\1/' /usr/local/etc/php/php.ini
-        sudo service apache2 reload > /dev/null
-        echo "xdebug on";
-        ;;
-    off)
-
-        sudo sed -i 's/^\(.*xdebug\.so\)/;\1/' /usr/local/etc/php/php.ini
-        sudo service apache2 reload > /dev/null
-        echo "xdebug off";
-        ;;
-    *)
-        xdb_usage
-  esac
-}
+alias drupalcs="phpcs --standard=Drupal --extensions='php,module,inc,install,test,profile,theme,css,info,txt,md'" 
+alias drupalcsp="phpcs --standard=DrupalPractice --extensions='php,module,inc,install,test,profile,theme,css,info,txt,md'" 
+alias drupalcbf="phpcbf --standard=Drupal --extensions='php,module,inc,install,test,profile,theme,css,info,txt,md'"

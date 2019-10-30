@@ -143,11 +143,9 @@ RUN echo 'zend_extension = /usr/local/lib/php/extensions/no-debug-non-zts-201707
 RUN touch /usr/local/etc/php/conf.d/xdebug.ini &&\
   echo 'xdebug.remote_enable=1' >> /usr/local/etc/php/conf.d/xdebug.ini &&\
   echo 'xdebug.remote_autostart=0' >> /usr/local/etc/php/conf.d/xdebug.ini &&\
-  echo 'xdebug.remote_connect_back=0' >> /usr/local/etc/php/conf.d/xdebug.ini &&\
+  echo 'xdebug.remote_connect_back=1' >> /usr/local/etc/php/conf.d/xdebug.ini &&\
   echo 'xdebug.remote_port=9000' >> /usr/local/etc/php/conf.d/xdebug.ini &&\
-  echo 'xdebug.remote_log=/tmp/php7-xdebug.log' >> /usr/local/etc/php/conf.d/xdebug.ini &&\
-  echo 'xdebug.remote_host=docker_host' >> /usr/local/etc/php/conf.d/xdebug.ini &&\
-  echo 'xdebug.idekey=PHPSTORM' >> /usr/local/etc/php/conf.d/xdebug.ini
+  echo 'xdebug.remote_log=/tmp/php7-xdebug.log' >> /usr/local/etc/php/conf.d/xdebug.ini
 
 #RUN rm -rf /var/www/html && \
 #  mkdir -p /var/lock/apache2 /var/run/apache2 /var/log/apache2 /var/www/html && \
@@ -210,13 +208,9 @@ RUN echo "Europe/Paris" > /etc/timezone && dpkg-reconfigure -f noninteractive tz
 # Expose 80 for apache, 9000 for xdebug
 EXPOSE 80 9000
 
-# Add web .bashrc config
-COPY config/bashrc /var/www/
-RUN mv /var/www/bashrc /var/www/.bashrc
-RUN chown www-data:www-data /var/www/.bashrc
-RUN echo "source .bashrc" >> /var/www/.profile ;\
-    chown www-data:www-data /var/www/.profile
-
+# ADD BASHRC CONFIG
+COPY config/bashrc /root/
+RUN mv /root/bashrc /root/.bashrc
 
 # Set and run a custom entrypoint
 COPY core/docker-entrypoint.sh /
