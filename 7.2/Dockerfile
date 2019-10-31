@@ -42,7 +42,8 @@ RUN apt-get clean && apt-get update && apt-cache search php-mysql && apt-get ins
   htop \
   libldap2-dev \
   libssl-dev \
-  npm
+  npm \ 
+  pv
 
 # postgresql-client-9.5
 RUN wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo apt-key add - && echo "deb http://apt.postgresql.org/pub/repos/apt/ jessie-pgdg main" >> /etc/apt/sources.list && apt-get update && apt-get install -y postgresql-client-9.5
@@ -160,6 +161,10 @@ RUN composer global require drupal/coder
 RUN ln -s ~/.composer/vendor/bin/phpcs /usr/local/bin
 RUN ln -s ~/.composer/vendor/bin/phpcbf /usr/local/bin
 RUN phpcs --config-set installed_paths ~/.composer/vendor/drupal/coder/coder_sniffer
+
+# Intallation of drupal-check to see deprecated code.
+RUN composer global require mglaman/drupal-check
+RUN ln -s ~/.composer/vendor/bin/drupal-check /usr/local/bin
 
 # install msmtp
 RUN set -x \
